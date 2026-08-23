@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import Actions from "./actions";
 
 export default function DataTable({ data }: { data: User[] }) {
   return (
@@ -32,7 +33,9 @@ export default function DataTable({ data }: { data: User[] }) {
             <TableCell>
               {user.isActive ? "Đang hoạt động" : "Không hoạt động"}
             </TableCell>
-            <TableCell></TableCell>
+            <TableCell>
+              <Actions user={user} />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
