@@ -1,9 +1,10 @@
 "use client";
 
 import type { Dispatch, SetStateAction } from "react";
-import type { ScaleStatus, WeightReading } from "@/drivers/WeightReading";
+
 import type { ScaleModel } from "@/drivers/ScaleModel";
 import { SCALE_MODEL_LABELS } from "@/drivers/ScaleModel";
+import type { ScaleStatus, WeightReading } from "@/drivers/WeightReading";
 
 interface ScaleConsoleProps {
   reading: WeightReading | null;
@@ -43,45 +44,49 @@ export function ScaleConsole({
   hasWebSerial,
 }: ScaleConsoleProps) {
   const weightText = reading ? reading.valueKg.toFixed(2) : "0.00";
-  const stableLabel = reading?.stable ? "STABLE" : "UNSTABLE";
+  const stableLabel = reading
+    ? reading.stable
+      ? "STABLE"
+      : "UNSTABLE"
+    : "WAITING FOR DATA";
   const stableClass = reading?.stable ? "text-emerald-400" : "text-amber-400";
 
   return (
-    <div className="flex min-h-full flex-col px-6 py-5 text-slate-50">
-      <section className="mb-6 flex flex-col gap-4 rounded-3xl border border-slate-800/70 bg-slate-950/80 p-5 shadow-[0_0_80px_-24px_rgba(14,165,233,0.8)] sm:flex-row sm:items-center sm:justify-between">
+    <div className="mx-auto flex min-h-[calc(100vh-76px)] w-full max-w-375 flex-col px-6 pb-8 pt-3 text-slate-50">
+      <section className="mb-5 flex flex-col gap-4 border-b border-slate-800 py-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="text-xs uppercase tracking-[0.35em] text-cyan-400/80">
-            Scale System
+          <div className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+            Weighing station 01
           </div>
-          <div className="mt-2 text-sm text-slate-300">
-            Real-time weight monitor with driver abstraction
+          <div className="mt-2 text-sm text-slate-400">
+            Real-time industrial scale monitor
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-200">
+          <div className="rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-200">
             Web Serial
           </div>
-          <div className="text-sm text-slate-300">
-            Driver kết nối thực tế, không dùng mock data.
+          <div className="hidden text-sm text-slate-500 sm:block">
+            Live device input
           </div>
         </div>
       </section>
 
-      <section className="mb-6 flex flex-col gap-4 rounded-3xl border border-slate-800/70 bg-slate-950/80 p-5 shadow-[0_0_80px_-24px_rgba(14,165,233,0.8)] sm:flex-row sm:items-center sm:justify-between">
+      <section className="mb-5 flex flex-col gap-4 border border-slate-800 bg-slate-900/60 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="text-xs uppercase tracking-[0.35em] text-cyan-400/80">
-            Scale Model
+          <div className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+            Device profile
           </div>
-          <div className="mt-2 text-sm text-slate-300">
-            Chọn chuẩn dữ liệu phù hợp với loại cân
+          <div className="mt-2 text-sm text-slate-400">
+            Parser used for incoming serial payloads
           </div>
         </div>
 
         <select
           value={scaleModel}
           onChange={(event) => setScaleModel(event.target.value as ScaleModel)}
-          className="rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition hover:border-cyan-400"
+          className="rounded-md border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition hover:border-amber-400"
         >
           {Object.entries(SCALE_MODEL_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
@@ -92,10 +97,10 @@ export function ScaleConsole({
       </section>
 
       <section className="grid flex-1 gap-6 sm:grid-cols-[1fr_420px]">
-        <div className="flex flex-col justify-between rounded-[2rem] border border-slate-800/70 bg-slate-950/90 p-6 shadow-[0_0_50px_-28px_rgba(14,165,233,0.85)]">
+        <div className="flex flex-col justify-between border border-slate-800 bg-[#111820] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.35em] text-cyan-400/80">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
                 Current Weight
               </p>
               <p
@@ -112,18 +117,18 @@ export function ScaleConsole({
           </div>
 
           <div className="mt-10 flex flex-col items-start gap-4">
-            <p className="text-[14vw] font-semibold leading-[0.85] text-cyan-300 sm:text-[12vw] md:text-[9vw] lg:text-[7vw]">
+            <p className="font-mono text-[clamp(4.5rem,12vw,11rem)] font-semibold leading-[0.85] text-slate-50">
               {weightText}
             </p>
             <p className="text-base font-medium uppercase tracking-[0.35em] text-slate-400">
-              Kilograms
+              kg
             </p>
           </div>
         </div>
 
-        <div className="space-y-4 rounded-[2rem] border border-slate-800/70 bg-slate-950/90 p-6 shadow-[0_0_40px_-20px_rgba(14,165,233,0.75)]">
+        <div className="space-y-4 border border-slate-800 bg-[#111820] p-6">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-xs uppercase tracking-[0.35em] text-cyan-400/80">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
               Connection
             </p>
             <span className="rounded-full border border-slate-700/80 px-3 py-1 text-xs text-slate-300">
@@ -135,7 +140,7 @@ export function ScaleConsole({
             <button
               type="button"
               onClick={isConnected ? onDisconnect : onConnect}
-              className="rounded-3xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:bg-slate-700"
+              className="rounded-md bg-amber-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-400 disabled:bg-slate-700"
               disabled={hasWebSerial !== true}
             >
               {isConnected ? "Disconnect" : "Connect"}
@@ -148,7 +153,7 @@ export function ScaleConsole({
                   : "Web Serial API is unavailable. Use a compatible browser."}
             </p>
             {error ? (
-              <p className="rounded-2xl bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+              <p className="rounded-md bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
                 {error}
               </p>
             ) : null}
@@ -156,7 +161,7 @@ export function ScaleConsole({
               <div className="mb-2 text-xs uppercase tracking-[0.35em] text-slate-500">
                 Payload
               </div>
-              <pre className="whitespace-pre-wrap break-words text-[0.95rem] leading-6">
+              <pre className="whitespace-pre-wrap wrap-break-word text-[0.95rem] leading-6">
                 {reading?.rawPayload ?? "Waiting for data..."}
               </pre>
             </div>

@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
+
 import { ScaleDriverFactory } from "@/drivers/ScaleDriverFactory";
 import type { ScaleModel } from "@/drivers/ScaleModel";
 import type { ScaleStatus, WeightReading } from "@/drivers/WeightReading";
@@ -11,20 +18,24 @@ export interface UseScaleDriverOptions {
 }
 
 export function useScaleDriver(options: UseScaleDriverOptions) {
+  const { baudRate = 9600 } = options;
+  const [scaleModel, setScaleModel] = useState<ScaleModel>(
+    options.scaleModel ?? "generic-text",
+  );
   const [reading, setReading] = useState<WeightReading | null>(null);
   const [status, setStatus] = useState<ScaleStatus>("disconnected");
   const [error, setError] = useState<string | undefined>(undefined);
 
   const driver = useMemo(
-    () => ScaleDriverFactory.create("web-serial", options),
-    [options?.baudRate, options?.scaleModel],
+    () => ScaleDriverFactory.create("web-serial", { baudRate, scaleModel }),
+    [baudRate, scaleModel],
   );
 
-  const [hasWebSerial, setHasWebSerial] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setHasWebSerial(typeof navigator !== "undefined" && "serial" in navigator);
-  }, []);
+  const hasWebSerial = useSyncExternalStore(
+    () => () => {},
+    () => typeof navigator !== "undefined" && "serial" in navigator,
+    () => false,
+  );
 
   const connect = useCallback(async () => {
     setError(undefined);
@@ -64,5 +75,7 @@ export function useScaleDriver(options: UseScaleDriverOptions) {
     disconnect,
     isConnected: status === "connected",
     hasWebSerial,
+    scaleModel,
+    setScaleModel,
   };
 }

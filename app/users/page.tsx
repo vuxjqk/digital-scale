@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import DataPagination from "@/components/data-pagination";
 import DialogDelete from "@/components/dialog-delete";
 import DataTable from "@/components/users/data-table";
@@ -6,6 +8,7 @@ import DialogUpdate from "@/components/users/dialog-update";
 import FilterBar from "@/components/users/filter-bar";
 
 import UsersProvider from "@/contexts/users-context";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseBoolean, parseEnum, parseString } from "@/lib/utils";
 import { PageProps } from "@/types";
@@ -13,6 +16,8 @@ import { PageProps } from "@/types";
 import { Prisma, Role } from "../generated/prisma/client";
 
 export default async function UsersPage({ searchParams }: PageProps) {
+  if (!(await getCurrentUser())) redirect("/login");
+
   const params = await searchParams;
 
   const page = Math.max(Number(params.page) || 1, 1);

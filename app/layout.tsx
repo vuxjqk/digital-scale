@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 
 import { Toaster } from "@/components/ui/sonner";
 
+import { ScaleProvider } from "@/contexts/scale-context";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <ScaleProvider>{children}</ScaleProvider>
         <Toaster />
       </body>
     </html>

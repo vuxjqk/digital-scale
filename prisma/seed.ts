@@ -1,8 +1,7 @@
+import { PrismaClient, Role } from "@/app/generated/prisma/client";
 import { faker } from "@faker-js/faker";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import bcrypt from "bcryptjs";
-
-import { PrismaClient, Role } from "@/app/generated/prisma/client";
 
 const adapter = new PrismaBetterSqlite3({ url: process.env["DATABASE_URL"] });
 const prisma = new PrismaClient({ adapter });
