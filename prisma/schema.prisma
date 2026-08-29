@@ -33,6 +33,17 @@ model User {
   @@map("users")
 }
 
+model Product {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique @map("code")
+  name      String    @map("name")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("products")
+}
+
 model WeighingRecord {
   id          Int      @id @default(autoincrement())
   productName String   @map("product_name")

@@ -17,9 +17,15 @@ export default async function ManagementPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const requestedPage = Number(params.page);
   const page = Math.max(Number.isInteger(requestedPage) ? requestedPage : 1, 1);
-  const totalItems = await prisma.weighingRecord.count({
-    where: { userId: user.id },
-  });
+  const [totalItems, products] = await Promise.all([
+    prisma.weighingRecord.count({
+      where: { userId: user.id },
+    }),
+    prisma.product.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, code: true, name: true },
+    }),
+  ]);
   const totalPages = Math.max(Math.ceil(totalItems / PAGE_SIZE), 1);
   const currentPage = Math.min(page, totalPages);
   const records = await prisma.weighingRecord.findMany({
@@ -48,6 +54,12 @@ export default async function ManagementPage({ searchParams }: PageProps) {
           >
             Về màn hình cân
           </Link>
+          <Link
+            href="/products"
+            className="rounded-lg border border-cyan-300 bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 transition hover:border-cyan-500"
+          >
+            Quản lý sản phẩm
+          </Link>
           <a
             href="/api/management/export"
             className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
@@ -64,6 +76,7 @@ export default async function ManagementPage({ searchParams }: PageProps) {
           </form>
         </header>
         <WeighingRecords
+          products={products}
           records={records.map((record) => ({
             ...record,
             weighedAt: record.weighedAt.toISOString(),

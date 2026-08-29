@@ -8,6 +8,8 @@ import {
   useTransition,
 } from "react";
 
+import { ProductCombobox } from "./product-combobox";
+
 import { useRouter } from "next/navigation";
 
 import {
@@ -32,11 +34,13 @@ const initialState: WeighingRecordState = {};
 
 export function WeighingRecords({
   records,
+  products,
   page,
   totalPages,
   basePath = "/management",
 }: {
   records: RecordRow[];
+  products: { id: number; code: string; name: string }[];
   page: number;
   totalPages: number;
   basePath?: string;
@@ -61,9 +65,7 @@ export function WeighingRecords({
   const router = useRouter();
   const handleConnect = useCallback(() => connect(), [connect]);
   const handleDisconnect = useCallback(() => disconnect(), [disconnect]);
-  const canSave = Boolean(
-    reading?.stable && reading.valueKg > 0 && isConnected,
-  );
+  const canSave = true;
 
   useEffect(() => {
     if (state.success) {
@@ -153,24 +155,7 @@ export function WeighingRecords({
         action={formAction}
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-6"
       >
-        <label className="text-sm text-slate-300 lg:col-span-2">
-          Sản phẩm *
-          <input
-            name="productName"
-            required
-            placeholder="Tên sản phẩm"
-            className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-slate-100 outline-none focus:border-cyan-400"
-          />
-        </label>
-        <label className="text-sm text-slate-300">
-          Mã hàng *
-          <input
-            name="productCode"
-            required
-            placeholder="SP-001"
-            className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-slate-100 outline-none focus:border-cyan-400"
-          />
-        </label>
+        <ProductCombobox products={products} />
         <label className="text-sm text-slate-300">
           Khối lượng tự động (kg)
           <input
