@@ -45,16 +45,18 @@ model Product {
 }
 
 model WeighingRecord {
-  id          Int      @id @default(autoincrement())
-  productName String   @map("product_name")
-  productCode String   @map("product_code")
-  weight      Float
-  unit        String   @default("kg")
-  weighedAt   DateTime @default(now()) @map("weighed_at")
-  note        String?
-  userId      Int      @map("user_id")
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now()) @map("created_at")
+  id           Int      @id @default(autoincrement())
+  productName  String   @map("product_name")
+  productCode  String   @map("product_code")
+  employeeCode String?  @map("employee_code")
+  employeeName String?  @map("employee_name")
+  weight       Float
+  unit         String   @default("kg")
+  weighedAt    DateTime @default(now()) @map("weighed_at")
+  note         String?
+  userId       Int      @map("user_id")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now()) @map("created_at")
 
   @@index([userId, weighedAt])
   @@map("weighing_records")

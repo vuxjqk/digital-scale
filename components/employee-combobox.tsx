@@ -2,33 +2,33 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-export function ProductCombobox({
-  products,
+export function EmployeeCombobox({
+  employees,
 }: {
-  products: { id: number; code: string; name: string }[];
+  employees: { id: number; fullName: string; username: string }[];
 }) {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const selectedProduct = useMemo(
-    () => products.find((product) => product.id === selectedId) ?? null,
-    [products, selectedId],
+  const selectedEmployee = useMemo(
+    () => employees.find((employee) => employee.id === selectedId) ?? null,
+    [employees, selectedId],
   );
 
-  const filteredProducts = useMemo(() => {
+  const filteredEmployees = useMemo(() => {
     const keyword = query.trim().toLowerCase();
 
-    if (!keyword) return products.slice(0, 8);
+    if (!keyword) return employees.slice(0, 8);
 
-    return products.filter((product) => {
+    return employees.filter((employee) => {
       return (
-        product.name.toLowerCase().includes(keyword) ||
-        product.code.toLowerCase().includes(keyword)
+        employee.fullName.toLowerCase().includes(keyword) ||
+        employee.username.toLowerCase().includes(keyword)
       );
     });
-  }, [products, query]);
+  }, [employees, query]);
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
@@ -44,17 +44,17 @@ export function ProductCombobox({
     return () => document.removeEventListener("mousedown", handlePointerDown);
   }, []);
 
-  const handleSelect = (product: {
+  const handleSelect = (employee: {
     id: number;
-    code: string;
-    name: string;
+    fullName: string;
+    username: string;
   }) => {
-    setSelectedId(product.id);
-    setQuery(product.name);
+    setSelectedId(employee.id);
+    setQuery(employee.fullName);
     setIsOpen(false);
   };
 
-  const inputValue = selectedProduct ? selectedProduct.name : query;
+  const inputValue = selectedEmployee ? selectedEmployee.fullName : query;
 
   return (
     <div
@@ -62,7 +62,7 @@ export function ProductCombobox({
       className="relative text-sm text-slate-300 lg:col-span-2"
     >
       <label className="block">
-        Sản phẩm *
+        Nhân viên
         <div className="relative mt-2">
           <input
             value={inputValue}
@@ -72,22 +72,21 @@ export function ProductCombobox({
               setIsOpen(true);
             }}
             onFocus={() => setIsOpen(true)}
-            placeholder="Chọn hoặc tìm sản phẩm"
-            required
+            placeholder="Chọn hoặc tìm nhân viên (không bắt buộc)"
             className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-slate-100 outline-none focus:border-cyan-400"
           />
-          {isOpen && filteredProducts.length > 0 ? (
+          {isOpen && filteredEmployees.length > 0 ? (
             <div className="absolute z-20 mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 p-1 shadow-lg">
-              {filteredProducts.map((product) => (
+              {filteredEmployees.map((employee) => (
                 <button
-                  key={product.id}
+                  key={employee.id}
                   type="button"
-                  onClick={() => handleSelect(product)}
+                  onClick={() => handleSelect(employee)}
                   className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-200 hover:bg-slate-800"
                 >
-                  <span>{product.name}</span>
+                  <span>{employee.fullName}</span>
                   <span className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                    {product.code}
+                    {employee.username}
                   </span>
                 </button>
               ))}
@@ -98,19 +97,19 @@ export function ProductCombobox({
 
       <input
         type="hidden"
-        name="productName"
-        value={selectedProduct?.name ?? query.trim()}
+        name="employeeName"
+        value={selectedEmployee?.fullName ?? query.trim()}
       />
       <input
         type="hidden"
-        name="productCode"
-        value={selectedProduct?.code ?? ""}
+        name="employeeCode"
+        value={selectedEmployee?.username ?? ""}
       />
 
       <p className="mt-2 text-xs text-slate-400">
-        {selectedProduct
-          ? `Đã chọn: ${selectedProduct.name} (${selectedProduct.code})`
-          : "Chọn một sản phẩm có sẵn trong danh sách."}
+        {selectedEmployee
+          ? `Đã chọn: ${selectedEmployee.fullName} (${selectedEmployee.username})`
+          : "Có thể để trống nếu không gắn với nhân viên nào."}
       </p>
     </div>
   );

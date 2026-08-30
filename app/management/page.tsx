@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { WeighingRecords } from "@/components/weighing-records";
 
 import { logout } from "@/actions/auth";
+import { Role } from "@/app/generated/prisma/client";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PageProps } from "@/types";
@@ -17,13 +18,22 @@ export default async function ManagementPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const requestedPage = Number(params.page);
   const page = Math.max(Number.isInteger(requestedPage) ? requestedPage : 1, 1);
-  const [totalItems, products] = await Promise.all([
+  const [totalItems, products, employees] = await Promise.all([
     prisma.weighingRecord.count({
       where: { userId: user.id },
     }),
     prisma.product.findMany({
       orderBy: { name: "asc" },
       select: { id: true, code: true, name: true },
+    }),
+    prisma.user.findMany({
+      where: {
+        isActive: true,
+        deletedAt: null,
+        role: { not: Role.ADMIN },
+      },
+      orderBy: { fullName: "asc" },
+      select: { id: true, username: true, fullName: true },
     }),
   ]);
   const totalPages = Math.max(Math.ceil(totalItems / PAGE_SIZE), 1);
@@ -60,6 +70,12 @@ export default async function ManagementPage({ searchParams }: PageProps) {
           >
             Quản lý sản phẩm
           </Link>
+          <Link
+            href="/employees"
+            className="rounded-lg border border-violet-300 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700 transition hover:border-violet-500"
+          >
+            Quản lý nhân viên
+          </Link>
           <a
             href="/api/management/export"
             className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
@@ -77,8 +93,11 @@ export default async function ManagementPage({ searchParams }: PageProps) {
         </header>
         <WeighingRecords
           products={products}
+          employees={employees}
           records={records.map((record) => ({
             ...record,
+            employeeCode: record.employeeCode ?? null,
+            employeeName: record.employeeName ?? null,
             weighedAt: record.weighedAt.toISOString(),
           }))}
           page={currentPage}

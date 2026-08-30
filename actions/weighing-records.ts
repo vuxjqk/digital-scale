@@ -19,6 +19,8 @@ export async function createWeighingRecord(
 
   const productName = String(formData.get("productName") ?? "").trim();
   const productCode = String(formData.get("productCode") ?? "").trim();
+  const employeeCode = String(formData.get("employeeCode") ?? "").trim();
+  const employeeName = String(formData.get("employeeName") ?? "").trim();
   const weight = Number(formData.get("weight"));
   const unit = String(formData.get("unit") ?? "kg").trim();
   const weighedAtValue = String(formData.get("weighedAt") ?? "");
@@ -39,6 +41,8 @@ export async function createWeighingRecord(
     data: {
       productName,
       productCode,
+      employeeCode: employeeCode || null,
+      employeeName: employeeName || null,
       weight,
       unit,
       weighedAt,

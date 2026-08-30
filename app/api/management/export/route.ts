@@ -17,6 +17,8 @@ export async function GET() {
     select: {
       productName: true,
       productCode: true,
+      employeeCode: true,
+      employeeName: true,
       weight: true,
       unit: true,
       weighedAt: true,
@@ -32,6 +34,8 @@ export async function GET() {
   worksheet.columns = [
     { header: "Sản phẩm", key: "productName", width: 28 },
     { header: "Mã hàng", key: "productCode", width: 18 },
+    { header: "Nhân viên", key: "employeeName", width: 26 },
+    { header: "Mã nhân viên", key: "employeeCode", width: 18 },
     { header: "Khối lượng", key: "weight", width: 16 },
     { header: "Đơn vị", key: "unit", width: 12 },
     { header: "Thời gian cân", key: "weighedAt", width: 22 },
@@ -45,7 +49,7 @@ export async function GET() {
     fgColor: { argb: "FF334155" },
   };
   worksheet.getRow(1).alignment = { vertical: "middle" };
-  worksheet.autoFilter = "A1:F1";
+  worksheet.autoFilter = "A1:H1";
   worksheet.views = [{ state: "frozen", ySplit: 1 }];
 
   for (const record of records) {

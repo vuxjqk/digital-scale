@@ -53,7 +53,7 @@ export class YaohuaT3WeightParser implements IScaleParser {
     const weightKg = value / 1000;
 
     return {
-      valueKg: Number(weightKg.toFixed(2)),
+      valueKg: Number(weightKg),
       stable: true,
       status: "stable",
       timestamp: Date.now(),
